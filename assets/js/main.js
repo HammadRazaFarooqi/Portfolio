@@ -227,3 +227,45 @@
   document.addEventListener('scroll', navmenuScrollspy);
 
 })();
+
+
+document.getElementById("contactForm").addEventListener("submit", async function (e) {
+  e.preventDefault(); // Prevent default form submission
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  try {
+      // Send the POST request using fetch
+      const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: formData,
+      });
+
+      const data = await response.json(); // Parse the response as JSON
+
+      if (response.ok && data.success) {
+          // Show custom success message
+          showStatusMessage("Your message has been sent. Thank you!", "green");
+          form.reset(); // Clear the form
+      } else {
+          // Show error message from API or a default one
+          showStatusMessage(
+              data.message || "Failed to send the message. Please try again.",
+              "red"
+          );
+      }
+  } catch (error) {
+      // Handle network or other errors
+      console.error("Error:", error);
+      showStatusMessage("An error occurred. Please try again later.", "red");
+  }
+});
+
+// Function to show a status message
+function showStatusMessage(message, color) {
+  const statusElement = document.getElementById("formStatus");
+  statusElement.textContent = message;
+  statusElement.style.color = color;
+  statusElement.style.display = "block";
+}
